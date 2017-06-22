@@ -60,7 +60,7 @@ public final class BucketExceptions {
         return new IllegalArgumentException(msg);
     }
 
-    public static IllegalArgumentException nonPositivePeriodTokens(long tokens) {
+    public static IllegalArgumentException nonPositiveRefillTokens(long tokens) {
         String pattern = "{0} is wrong value for period tokens, because tokens should be positive";
         String msg = MessageFormat.format(pattern, tokens);
         return new IllegalArgumentException(msg);

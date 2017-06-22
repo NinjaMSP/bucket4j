@@ -19,6 +19,7 @@ package io.github.bucket4j;
 
 import java.io.Serializable;
 import java.time.Duration;
+import java.time.Instant;
 
 /**
  * Specifies the speed of tokens regeneration.
@@ -27,10 +28,13 @@ public class Refill implements Serializable {
 
     private final long periodNanos;
     private final long tokens;
+    private final boolean intervally;
+    private final Instant firstRefillTime;
+    private final long nanosPerToken;
 
-    private Refill(long tokens, Duration period) {
+    private Refill(long tokens, Duration period, boolean intervally, Instant firstRefillTime) {
         if (tokens <= 0) {
-            throw BucketExceptions.nonPositivePeriodTokens(tokens);
+            throw BucketExceptions.nonPositiveRefillTokens(tokens);
         }
         this.tokens = tokens;
 
@@ -40,6 +44,17 @@ public class Refill implements Serializable {
         this.periodNanos = period.toNanos();
         if (periodNanos <= 0) {
             throw BucketExceptions.nonPositivePeriod(periodNanos);
+        }
+        this.intervally = intervally;
+        this.firstRefillTime = firstRefillTime;
+
+        if (periodNanos < tokens) {
+            // TODO throw exception
+        }
+        if (periodNanos % tokens == 0) {
+            nanosPerToken = periodNanos / tokens;
+        } else {
+            this.nanosPerToken = periodNanos / tokens + 1;
         }
     }
 
@@ -61,15 +76,34 @@ public class Refill implements Serializable {
      * @return
      */
     public static Refill smooth(long tokens, Duration period) {
-        return new Refill(tokens, period);
+        return new Refill(tokens, period, false, null);
     }
 
-    long getPeriodNanos() {
+    public static Refill fixedInterval(long tokens, Duration period) {
+        return new Refill(tokens, period, true, null);
+    }
+
+    public static Refill fixedInterval(long tokens, Duration period, Instant timeOfFirstRefill) {
+        if (timeOfFirstRefill == null) {
+            // TODO throw exception
+        }
+        return new Refill(tokens, period, true, timeOfFirstRefill);
+    }
+
+    public long getPeriodNanos() {
         return periodNanos;
     }
 
-    long getTokens() {
+    public long getTokens() {
         return tokens;
+    }
+
+    public Instant getFirstRefillTime() {
+        return firstRefillTime;
+    }
+
+    public long getNanosPerToken() {
+        return nanosPerToken;
     }
 
     @Override
@@ -77,6 +111,8 @@ public class Refill implements Serializable {
         return "Refill{" +
                 "periodNanos=" + periodNanos +
                 ", tokens=" + tokens +
+                ", intervally=" + intervally +
+                ", firstRefillTime=" + firstRefillTime +
                 '}';
     }
 
