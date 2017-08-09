@@ -44,8 +44,7 @@ public class LockFreeBucket extends AbstractBucket {
         long currentTimeNanos = timeMeter.currentTimeNanos();
 
         while (true) {
-            newState.refillAllBandwidth(bandwidths, currentTimeNanos);
-            long availableToConsume = newState.getAvailableTokens(bandwidths);
+            long availableToConsume = newState.refillAllBandwidth(bandwidths, currentTimeNanos);
             long toConsume = Math.min(limit, availableToConsume);
             if (toConsume == 0) {
                 return 0;
@@ -67,8 +66,7 @@ public class LockFreeBucket extends AbstractBucket {
         long currentTimeNanos = timeMeter.currentTimeNanos();
 
         while (true) {
-            newState.refillAllBandwidth(bandwidths, currentTimeNanos);
-            long availableToConsume = newState.getAvailableTokens(bandwidths);
+            long availableToConsume = newState.refillAllBandwidth(bandwidths, currentTimeNanos);
             if (tokensToConsume > availableToConsume) {
                 return false;
             }
@@ -89,8 +87,7 @@ public class LockFreeBucket extends AbstractBucket {
         long currentTimeNanos = timeMeter.currentTimeNanos();
 
         while (true) {
-            newState.refillAllBandwidth(bandwidths, currentTimeNanos);
-            long availableToConsume = newState.getAvailableTokens(bandwidths);
+            long availableToConsume = newState.refillAllBandwidth(bandwidths, currentTimeNanos);
             if (tokensToConsume > availableToConsume) {
                 long nanosToWaitForRefill = newState.delayNanosAfterWillBePossibleToConsume(bandwidths, tokensToConsume);
                 return ConsumptionProbe.rejected(availableToConsume, nanosToWaitForRefill);
@@ -168,8 +165,7 @@ public class LockFreeBucket extends AbstractBucket {
     public long getAvailableTokens() {
         long currentTimeNanos = timeMeter.currentTimeNanos();
         BucketState snapshot = stateReference.get().copy();
-        snapshot.refillAllBandwidth(bandwidths, currentTimeNanos);
-        return snapshot.getAvailableTokens(bandwidths);
+        return snapshot.refillAllBandwidth(bandwidths, currentTimeNanos);
     }
 
     @Override

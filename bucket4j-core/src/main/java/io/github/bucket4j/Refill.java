@@ -90,6 +90,10 @@ public class Refill implements Serializable {
         return new Refill(tokens, period, true, timeOfFirstRefill);
     }
 
+    public boolean isIntervally() {
+        return intervally;
+    }
+
     public long getPeriodNanos() {
         return periodNanos;
     }
@@ -113,6 +117,7 @@ public class Refill implements Serializable {
                 ", tokens=" + tokens +
                 ", intervally=" + intervally +
                 ", firstRefillTime=" + firstRefillTime +
+                ", nanosPerToken=" + nanosPerToken +
                 '}';
     }
 

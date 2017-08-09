@@ -48,8 +48,7 @@ public class SynchronizedBucket extends AbstractBucket {
         long currentTimeNanos = timeMeter.currentTimeNanos();
         lock.lock();
         try {
-            state.refillAllBandwidth(bandwidths, currentTimeNanos);
-            long availableToConsume = state.getAvailableTokens(bandwidths);
+            long availableToConsume = state.refillAllBandwidth(bandwidths, currentTimeNanos);
             long toConsume = Math.min(limit, availableToConsume);
             if (toConsume == 0) {
                 return 0;
@@ -66,8 +65,7 @@ public class SynchronizedBucket extends AbstractBucket {
         long currentTimeNanos = timeMeter.currentTimeNanos();
         lock.lock();
         try {
-            state.refillAllBandwidth(bandwidths, currentTimeNanos);
-            long availableToConsume = state.getAvailableTokens(bandwidths);
+            long availableToConsume = state.refillAllBandwidth(bandwidths, currentTimeNanos);
             if (tokensToConsume > availableToConsume) {
                 return false;
             }
@@ -83,8 +81,7 @@ public class SynchronizedBucket extends AbstractBucket {
         long currentTimeNanos = timeMeter.currentTimeNanos();
         lock.lock();
         try {
-            state.refillAllBandwidth(bandwidths, currentTimeNanos);
-            long availableToConsume = state.getAvailableTokens(bandwidths);
+            long availableToConsume = state.refillAllBandwidth(bandwidths, currentTimeNanos);
             if (tokensToConsume > availableToConsume) {
                 long nanosToWaitForRefill = state.delayNanosAfterWillBePossibleToConsume(bandwidths, tokensToConsume);
                 return ConsumptionProbe.rejected(availableToConsume, nanosToWaitForRefill);
@@ -143,8 +140,7 @@ public class SynchronizedBucket extends AbstractBucket {
         long currentTimeNanos = timeMeter.currentTimeNanos();
         lock.lock();
         try {
-            state.refillAllBandwidth(bandwidths, currentTimeNanos);
-            return state.getAvailableTokens(bandwidths);
+            return state.refillAllBandwidth(bandwidths, currentTimeNanos);
         } finally {
             lock.unlock();
         }

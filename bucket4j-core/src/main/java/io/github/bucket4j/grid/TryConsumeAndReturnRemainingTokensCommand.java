@@ -22,8 +22,7 @@ public class TryConsumeAndReturnRemainingTokensCommand implements GridCommand<Co
         long currentTimeNanos = configuration.getTimeMeter().currentTimeNanos();
         Bandwidth[] bandwidths = configuration.getBandwidths();
 
-        state.refillAllBandwidth(bandwidths, currentTimeNanos);
-        long availableToConsume = state.getAvailableTokens(bandwidths);
+        long availableToConsume = state.refillAllBandwidth(bandwidths, currentTimeNanos);
         if (tokensToConsume <= availableToConsume) {
             state.consume(bandwidths, tokensToConsume);
             bucketStateModified = true;

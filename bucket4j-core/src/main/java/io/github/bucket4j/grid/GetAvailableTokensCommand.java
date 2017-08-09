@@ -14,8 +14,7 @@ public class GetAvailableTokensCommand implements GridCommand<Long> {
         Bandwidth[] bandwidths = configuration.getBandwidths();
         long currentTimeNanos = configuration.getTimeMeter().currentTimeNanos();
 
-        state.refillAllBandwidth(bandwidths, currentTimeNanos);
-        return state.getAvailableTokens(bandwidths);
+        return state.refillAllBandwidth(bandwidths, currentTimeNanos);
     }
 
     @Override
